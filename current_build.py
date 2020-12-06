@@ -20,12 +20,16 @@ cursor = conn.cursor()
 users = []
 passes = []
 actualuser = []
+player_hints = []
 loginwin = Tk()
 loginwin.title("Provide Login Credentials")
 loginwin.configure(bg='gray10')
 loginwin.geometry("475x275+600+300")
 #----LOGIN WINDOW FUNCTIONS-----------------------------------------------------
 def send_credentials(usr, pas):
+    global userglobal
+    userglobal = usr
+
     ind = 0
     userpassq = pd.read_sql_query("SELECT * FROM user_data", conn)
     count = len(userpassq.index)
@@ -41,11 +45,13 @@ def send_credentials(usr, pas):
         j += 1
         if j >= count:
             break
+
     for ele in users:
         if ele == usr:
             ind = users.index(usr)
             if passes[ind] == pas:
                 actualuser.append(ele)
+
                 loginwin.destroy()
 
     users.clear()
@@ -53,6 +59,7 @@ def send_credentials(usr, pas):
 def exiter():
     exit()
 def create_new(usr, pas):
+    global user
     user = (usr + "_rosters")
 
     cursor.execute("INSERT INTO user_data (Username, drowssap, [ip address]) VALUES ('"+usr+"', '"+pas+"', '')")
@@ -117,7 +124,7 @@ submit2.grid(row=5, column=3,rowspan=2, sticky = 'nswe')
 loginwin.mainloop()
 
 #---DEFINING GUI----------------------------------------------------------------
-if len(actualuser) == 1:
+if len(actualuser) >= 1:
     usrtitle = ("Welcome back " + actualuser[0])
 else:
     usrtitle = 'GUEST'
@@ -471,18 +478,47 @@ def card_builder():
     my_rosters2.config(width = 11, font=("fixedsys", 12),  bg='gray86',  bd=1, highlightbackground="light slate gray", highlightcolor="light slate gray", highlightthickness=2,relief='groove')                                                                         #----
     my_rosters2.grid(row=5, column=0, sticky='nswe', pady=5)
 
-    add = Button(card_frame,text="ADD", command=lambda:[getridof(), add_to_corrrect_roster(),add_to_deck()]  , bg='light slate gray', fg="gray90")
+    add = Button(card_frame,text="ADD", command=lambda:[getridof(), hinter(), add_to_corrrect_roster(),add_to_deck()]  , bg='light slate gray', fg="gray90")
     add.config(font=("fixedsys", 12), width=20)
     add.grid(row=5, column=1,sticky='w', padx=15)
 
-    #global quiz_hint
-    #player_ppg = Label(card_frame, text="Write a hint: " +str(hint), pady=10, bg='gray86')
-    #player_ppg.config(font=("fixedsys", 12))
-    #player_ppg.grid(row=6, column=0,sticky='w')
 
-    #hint = Entry(card_frame, width=30, borderwidth=2, bg='gray50')
-    #hint.config(font=("fixedsys", 12))
-    #hint.grid(row=6, column=1,sticky='w')
+#--ADD aplayer hint to databse------------------------------------------------
+def hinter():
+    hintwindow = Toplevel()
+    hintwindow.title("HINT")
+    hintwindow.configure(bg='gray86')
+
+
+    global quiz_hint
+    player_hint = Label(hintwindow, text="Write a hint: ", pady=10, bg='gray86')
+    player_hint.config(font=("fixedsys", 12))
+    player_hint.grid(row=0, column=0,sticky='w')
+
+    hint = Entry(hintwindow, width=30, borderwidth=2, bg='gray50')
+    hint.config(font=("fixedsys", 12))
+    hint.grid(row=0, column=1,sticky='w')
+    print(userglobal)
+    print(name)
+    print(hint.get())
+    apply_hint = Button(hintwindow, text="APPLY HINT",command=lambda:[addto_playerhints(name, hint.get())], bg='light slate gray', bd=2, fg='gray90')
+    apply_hint.config(font=("fixedsys", 12), width=25)
+    apply_hint.grid(row=0, column=2,sticky='w')
+    global hintforsave
+    hintforsave = hint.get().strip()
+#-------------------------------------------------------------------------------
+def addto_playerhints(name, hint):
+    player_hints.append(name)
+    player_hints.append(hint)
+    print(player_hints)
+#--ADDS THE PLAYER HINT TO THE DB-----------------------------------------------
+def hint_to_db(actualhint):
+    global dahint
+    dahint = actualhint.strip()
+    print(dahint)
+
+    cursor.execute(("UPDATE [dbo]."+userglobal+"_rosters SET [Player_Hint] = '"+dahint+"' WHERE [Player Name] LIKE '%"+name+"%';"))
+
 #---ADDS PLAYER TO CORRECT ROSTER IN A 2-DIMENSIONAL LIST-----------------------
 def add_to_corrrect_roster():
     i = 0
@@ -591,6 +627,19 @@ def sav_rosters():
             j = 1
         if k >= alength:
             break
+
+    p = 0
+    o = 1
+    while True:
+        cursor.execute(("UPDATE [dbo]."+userglobal+"_rosters SET [Player_Hint] = '"+player_hints[o]+"' WHERE [Player Name] LIKE '%"+player_hints[p]+"%';"))
+        print(player_hints[o])
+        print(player_hints[p])
+        o += 2
+        p += 2
+        if p >= len(player_hints):
+            break
+    #print(dahint)
+    #hint_to_db(dahint)
     conn.commit()#commits changes to the database
 #--DELETES DESIRED ROSTER   (NEEDS A REWORK AT SOME POINT)----------------------
 def del_rosters(val):
