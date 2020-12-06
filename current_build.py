@@ -56,7 +56,7 @@ def create_new(usr, pas):
     user = (usr + "_rosters")
 
     cursor.execute("INSERT INTO user_data (Username, drowssap, [ip address]) VALUES ('"+usr+"', '"+pas+"', '')")
-    cursor.execute("CREATE TABLE " +user+ " (roster_name nchar(15), [Player Name] varchar(50));")
+    cursor.execute("CREATE TABLE " +user+ " (roster_name nchar(15), [Player Name] varchar(50), Player_Hint varchar(MAX));")
     conn.commit()
     #----GUI FOR SUCCESS MESSAGE-----
     anewwindow = Toplevel()
@@ -230,7 +230,7 @@ def new_roster():
     my_rosters.grid(sticky='nswe')
     my_rosters["menu"].config(font=("fixedsys", 8), bg="gray86")
     my_rosters.config(width = 11, font=("fixedsys", 12),  bg='gray86',  bd=1, highlightbackground="light slate gray", highlightcolor="light slate gray", highlightthickness=2,relief='groove')
-    my_rosters.grid(row=5, column=3,columnspan=2, sticky='nswe', pady=5)
+    my_rosters.grid(row=6, column=3,columnspan=2, sticky='nswe', pady=5)
 
     viewhbtn = Button(root,text="VIEW", command=lambda:view_roster(), bg='light slate gray', bd=2, fg='gray90')
     viewhbtn.config(font=("fixedsys", 12))
@@ -474,6 +474,15 @@ def card_builder():
     add = Button(card_frame,text="ADD", command=lambda:[getridof(), add_to_corrrect_roster(),add_to_deck()]  , bg='light slate gray', fg="gray90")
     add.config(font=("fixedsys", 12), width=20)
     add.grid(row=5, column=1,sticky='w', padx=15)
+
+    #global quiz_hint
+    #player_ppg = Label(card_frame, text="Write a hint: " +str(hint), pady=10, bg='gray86')
+    #player_ppg.config(font=("fixedsys", 12))
+    #player_ppg.grid(row=6, column=0,sticky='w')
+
+    #hint = Entry(card_frame, width=30, borderwidth=2, bg='gray50')
+    #hint.config(font=("fixedsys", 12))
+    #hint.grid(row=6, column=1,sticky='w')
 #---ADDS PLAYER TO CORRECT ROSTER IN A 2-DIMENSIONAL LIST-----------------------
 def add_to_corrrect_roster():
     i = 0
@@ -505,7 +514,7 @@ def add_to_deck():
         if i >= len(indexable_rosters):
             break
 
-    if len(indexable_rosters) > 10:
+    if len(indexable_rosters) > 100:
         too_big = Label(newwindow, text="YOU HAVE REACHED MAX ROSTER SIZE", padx=5, pady=5, bg='gray86')
         too_big.config(font=("fixedsys", 10))
         too_big.pack()
@@ -785,11 +794,11 @@ q = Entry(root, width=30, borderwidth=2, bg='gray70')
 q.config(font=("fixedsys", 12))
 q.grid(row=1, column=1, padx=10, pady=10)
 
-create_roster = Label(root, text="BUILD A ROSTER", pady=10, bg='gray86')
+create_roster = Label(root, text="BUILD A QUIZ", pady=10, bg='gray86')
 create_roster.config(font=("fixedsys", 15))
 create_roster.grid(row=0, column=3,columnspan=2, sticky = 'nswe')
 
-rost_name = Label(root, text="ROSTER NAME:", pady=10, bg='gray86')
+rost_name = Label(root, text="QUIZ NAME:", pady=10, bg='gray86')
 rost_name.config(font=("fixedsys", 14))
 rost_name.grid(row=1, column=3, sticky = 'nswe')
 
