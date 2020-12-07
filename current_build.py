@@ -414,7 +414,7 @@ def view_roster():
                 if j >= len(truncated_rost):
                     break
 
-            analbtn = Button(roster_window, text="ANALYZE ROSTER", command=individual_roster_report, bg='khaki')
+            analbtn = Button(roster_window, text="ANALYZE Quiz", command=individual_roster_report, bg='khaki')
             analbtn.config(font=("fixedsys", 12), width=25)
             analbtn.pack()
             backbtn = Button(roster_window, text="BACK", command=roster_window.destroy, bg='Salmon')
@@ -596,7 +596,7 @@ def add_to_deck():
             i += 1
             if(i >= len(the_rost)):
                 break
-    backbtn = Button(newwindow, text="ANALYZE ROSTER", command=roster_report, bg='khaki')
+    backbtn = Button(newwindow, text="ANALYZE Quiz", command=roster_report, bg='khaki')
     backbtn.config(font=("fixedsys", 12), width=25)
     backbtn.pack()
     backbtn = Button(newwindow, text="BACK", command=newwindow.destroy, bg='Salmon')
