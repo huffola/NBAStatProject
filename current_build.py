@@ -789,6 +789,8 @@ def find_quiz():
 #builds the quiz form!!!
 def quizform(quiz_author, quiz_name):
     author_plus_rosters = quiz_author+"_rosters"
+
+    global thequiz_window
     thequiz_window = Toplevel()
     thequiz_window.title(quiz_name.upper())
     thequiz_window.geometry("1210x590")
@@ -810,7 +812,7 @@ def quizform(quiz_author, quiz_name):
         entry1.config(font=("fixedsys", 12))
         entry1.grid(row=0, column=0, sticky='w')
         #btns
-        btn1 = Button(thequiz_window,text="SUBMIT",command=lambda:[iscorrect(entry1.get())],bg='SeaGreen1')
+        btn1 = Button(thequiz_window,text="SUBMIT",command=lambda:[iscorrect1(entry1.get())],bg='SeaGreen1')
         btn1.config(font=("fixedsys", 12))
         btn1.grid(row=0, column=1, sticky='w')
         #hintlbl
@@ -833,10 +835,10 @@ def quizform(quiz_author, quiz_name):
         entry2.config(font=("fixedsys", 12))
         entry2.grid(row=1, column=0, sticky='w')
         #btns
-        btn1 = Button(thequiz_window,text="SUBMIT",command=lambda:[iscorrect(entry1.get())],bg='SeaGreen1')
+        btn1 = Button(thequiz_window,text="SUBMIT",command=lambda:[iscorrect1(entry1.get())],bg='SeaGreen1')
         btn1.config(font=("fixedsys", 12))
         btn1.grid(row=0, column=1, sticky='w')
-        btn2 = Button(thequiz_window,text="SUBMIT",command=lambda:[iscorrect(entry2.get())],bg='SeaGreen1')
+        btn2 = Button(thequiz_window,text="SUBMIT",command=lambda:[iscorrect2(entry2.get())],bg='SeaGreen1')
         btn2.config(font=("fixedsys", 12))
         btn2.grid(row=1, column=1, sticky='w')
         #hintlbl
@@ -866,13 +868,13 @@ def quizform(quiz_author, quiz_name):
         entry3.config(font=("fixedsys", 12))
         entry3.grid(row=2, column=0, sticky='w')
         #btns
-        btn1 = Button(thequiz_window,text="SUBMIT",command=lambda:[iscorrect(entry1.get())],bg='SeaGreen1')
+        btn1 = Button(thequiz_window,text="SUBMIT",command=lambda:[iscorrect1(entry1.get())],bg='SeaGreen1')
         btn1.config(font=("fixedsys", 12))
         btn1.grid(row=0, column=1, sticky='w')
-        btn2 = Button(thequiz_window,text="SUBMIT",command=lambda:[iscorrect(entry2.get())],bg='SeaGreen1')
+        btn2 = Button(thequiz_window,text="SUBMIT",command=lambda:[iscorrect2(entry2.get())],bg='SeaGreen1')
         btn2.config(font=("fixedsys", 12))
         btn2.grid(row=1, column=1, sticky='w')
-        btn3 = Button(thequiz_window,text="SUBMIT",command=lambda:[iscorrect(entry3.get())],bg='SeaGreen1')
+        btn3 = Button(thequiz_window,text="SUBMIT",command=lambda:[iscorrect3(entry3.get())],bg='SeaGreen1')
         btn3.config(font=("fixedsys", 12))
         btn3.grid(row=2, column=1, sticky='w')
         #hintlbl
@@ -909,16 +911,16 @@ def quizform(quiz_author, quiz_name):
         entry4.config(font=("fixedsys", 12))
         entry4.grid(row=3, column=0, sticky='w')
         #btns
-        btn1 = Button(thequiz_window,text="SUBMIT",command=lambda:[iscorrect(entry1.get())],bg='SeaGreen1')
+        btn1 = Button(thequiz_window,text="SUBMIT",command=lambda:[iscorrect1(entry1.get())],bg='SeaGreen1')
         btn1.config(font=("fixedsys", 12))
         btn1.grid(row=0, column=1, sticky='w')
-        btn2 = Button(thequiz_window,text="SUBMIT",command=lambda:[iscorrect(entry2.get())],bg='SeaGreen1')
+        btn2 = Button(thequiz_window,text="SUBMIT",command=lambda:[iscorrect2(entry2.get())],bg='SeaGreen1')
         btn2.config(font=("fixedsys", 12))
         btn2.grid(row=1, column=1, sticky='w')
-        btn3 = Button(thequiz_window,text="SUBMIT",command=lambda:[iscorrect(entry3.get())],bg='SeaGreen1')
+        btn3 = Button(thequiz_window,text="SUBMIT",command=lambda:[iscorrect3(entry3.get())],bg='SeaGreen1')
         btn3.config(font=("fixedsys", 12))
         btn3.grid(row=2, column=1, sticky='w')
-        btn4 = Button(thequiz_window,text="SUBMIT",command=lambda:[iscorrect(entry4.get())],bg='SeaGreen1')
+        btn4 = Button(thequiz_window,text="SUBMIT",command=lambda:[iscorrect4(entry4.get())],bg='SeaGreen1')
         btn4.config(font=("fixedsys", 12))
         btn4.grid(row=3, column=1, sticky='w')
         #hintlbl
@@ -964,19 +966,19 @@ def quizform(quiz_author, quiz_name):
         entry5.config(font=("fixedsys", 12))
         entry5.grid(row=4, column=0, sticky='w')
         #btns
-        btn1 = Button(thequiz_window,text="SUBMIT",command=lambda:[iscorrect(entry1.get())],bg='SeaGreen1')
+        btn1 = Button(thequiz_window,text="SUBMIT",command=lambda:[iscorrect1(entry1.get())],bg='SeaGreen1')
         btn1.config(font=("fixedsys", 12))
         btn1.grid(row=0, column=1, sticky='w')
-        btn2 = Button(thequiz_window,text="SUBMIT",command=lambda:[iscorrect(entry2.get())],bg='SeaGreen1')
+        btn2 = Button(thequiz_window,text="SUBMIT",command=lambda:[iscorrect2(entry2.get())],bg='SeaGreen1')
         btn2.config(font=("fixedsys", 12))
         btn2.grid(row=1, column=1, sticky='w')
-        btn3 = Button(thequiz_window,text="SUBMIT",command=lambda:[iscorrect(entry3.get())],bg='SeaGreen1')
+        btn3 = Button(thequiz_window,text="SUBMIT",command=lambda:[iscorrect3(entry3.get())],bg='SeaGreen1')
         btn3.config(font=("fixedsys", 12))
         btn3.grid(row=2, column=1, sticky='w')
-        btn4 = Button(thequiz_window,text="SUBMIT",command=lambda:[iscorrect(entry4.get())],bg='SeaGreen1')
+        btn4 = Button(thequiz_window,text="SUBMIT",command=lambda:[iscorrect4(entry4.get())],bg='SeaGreen1')
         btn4.config(font=("fixedsys", 12))
         btn4.grid(row=3, column=1, sticky='w')
-        btn5 = Button(thequiz_window,text="SUBMIT",command=lambda:[iscorrect(entry5.get())],bg='SeaGreen1')
+        btn5 = Button(thequiz_window,text="SUBMIT",command=lambda:[iscorrect5(entry5.get())],bg='SeaGreen1')
         btn5.config(font=("fixedsys", 12))
         btn5.grid(row=4, column=1, sticky='w')
         #hintlbl
@@ -997,14 +999,51 @@ def quizform(quiz_author, quiz_name):
         hintlbl5.grid(row=4, column=2, sticky='w')
 #------------------------------------------------------------------------------
 #function to check correctness of quiz answers
-def iscorrect(answer_given):
-    print(answer1)
-    print(answer2)
-    print(answer3)
-    print(answer4)
-    print(answer5)
-
-    return
+def iscorrect1(answer_given):
+    if answer_given in answer1:
+        cor1 = Label(thequiz_window,text="GREAT JOB!",bg='SeaGreen1')
+        cor1.config(font=("fixedsys", 12))
+        cor1.grid(row=0, column=4, sticky='w')
+    else:
+        incor1 = Label(thequiz_window,text="TRY AGAIN",bg='Salmon')
+        incor1.config(font=("fixedsys", 12))
+        incor1.grid(row=0, column=4, sticky='w')
+def iscorrect2(answer_given):
+    if answer_given in answer2:
+        cor2 = Label(thequiz_window,text="GREAT JOB!",bg='SeaGreen1')
+        cor2.config(font=("fixedsys", 12))
+        cor2.grid(row=1, column=4, sticky='w')
+    else:
+        incor2 = Label(thequiz_window,text="TRY AGAIN",bg='Salmon')
+        incor2.config(font=("fixedsys", 12))
+        incor2.grid(row=1, column=4, sticky='w')
+def iscorrect3(answer_given):
+    if answer_given in answer3:
+        cor3 = Label(thequiz_window,text="GREAT JOB!",bg='SeaGreen1')
+        cor3.config(font=("fixedsys", 12))
+        cor3.grid(row=2, column=4, sticky='w')
+    else:
+        incor3 = Label(thequiz_window,text="TRY AGAIN",bg='Salmon')
+        incor3.config(font=("fixedsys", 12))
+        incor3.grid(row=2, column=4, sticky='w')
+def iscorrect4(answer_given):
+    if answer_given in answer4:
+        cor4 = Label(thequiz_window,text="GREAT JOB!",bg='SeaGreen1')
+        cor4.config(font=("fixedsys", 12))
+        cor4.grid(row=3, column=4, sticky='w')
+    else:
+        incor4 = Label(thequiz_window,text="TRY AGAIN",bg='Salmon')
+        incor4.config(font=("fixedsys", 12))
+        incor4.grid(row=3, column=4, sticky='w')
+def iscorrect5(answer_given):
+    if answer_given in answer5:
+        cor5 = Label(thequiz_window,text="GREAT JOB!",bg='SeaGreen1')
+        cor5.config(font=("fixedsys", 12))
+        cor5.grid(row=4, column=4, sticky='w')
+    else:
+        incor5 = Label(thequiz_window,text="TRY AGAIN",bg='Salmon')
+        incor5.config(font=("fixedsys", 12))
+        incor5.grid(row=4, column=4, sticky='w')
 #--IF RETURNING USER, GRABS ROSTERS SPECIFIC TO THE USER FROM THE SERVER--------
 def logged_in():
     if len(actualuser) == 0:
