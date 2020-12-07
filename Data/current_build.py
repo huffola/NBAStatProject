@@ -64,7 +64,7 @@ def create_new(usr, pas):
     user = (usr + "_rosters")
 
     cursor.execute("INSERT INTO user_data (Username, drowssap, [ip address]) VALUES ('"+usr+"', '"+pas+"', '')")
-    cursor.execute("CREATE TABLE " +user+ " (roster_name nchar(15), [Player Name] varchar(50), [Player_Hint] varchar(MAX), [description] varchar(MAX));")
+    cursor.execute("CREATE TABLE " +user+ " (roster_name varchar(MAX), [Player Name] varchar(50), [Player_Hint] varchar(MAX), [description] varchar(MAX));")
     conn.commit()
     #----GUI FOR SUCCESS MESSAGE-----
     anewwindow = Toplevel()
@@ -226,6 +226,7 @@ def add_to_team(var):
 def new_roster():
 
     #make a new window to write a short quiz description -----------------------
+    global desc_window
     desc_window = Toplevel()
     desc_window.title("DESCRIPTION")
     desc_window.configure(bg='gray86')
@@ -505,6 +506,7 @@ def card_builder():
 
 #--ADD aplayer hint to databse------------------------------------------------
 def hinter():
+    global hintwindow
     hintwindow = Toplevel()
     hintwindow.title("HINT")
     hintwindow.configure(bg='gray86')
@@ -530,11 +532,13 @@ def hinter():
 def addto_playerhints(name, hint):
     player_hints.append(name)
     player_hints.append(hint)
-    print(player_hints)
+    hintwindow.destroy()
+    #print(player_hints)
 def add_description(rosname, descrip):
     descriptions.append(rosname)
     descriptions.append(descrip)
-    print(descriptions)
+    desc_window.destroy()
+    #print(descriptions)
 #--ADDS THE PLAYER HINT TO THE DB-----------------------------------------------
 def hint_to_db(actualhint):
     global dahint
@@ -728,62 +732,524 @@ def find_quiz():
         if i >= tcount:
             break
     act_tables_with_quizzes = [s for s in pot_tables_with_quizzes if "_rosters" in s]
-    #the list in the line above is a list of tables with quizzes in them
-    print(act_tables_with_quizzes)
-    usr1name = act_tables_with_quizzes[0][:-8]
-    print(usr1name)
-    usr2name = act_tables_with_quizzes[1][:-8]
+#run a loop for future use of endless users
 
-    user1data = pd.read_sql_query("Select * from dbo."+act_tables_with_quizzes[0], conn)
-    print(user1data)#this return the first users quiz data
-    user1desc = user1data['description'].values[0]
-    user1qname = user1data['roster_name'].values[0]
-    user2data = pd.read_sql_query("Select * from dbo."+act_tables_with_quizzes[1], conn)
-    print(user2data)#this return the first users quiz data
-    user2desc = user2data['description'].values[0]
-    user2qname = user2data['roster_name'].values[0]
+
+
+
+
+
+    global findquiz_window
     findquiz_window = Toplevel()
     findquiz_window.title("AVAILABLE QUIZZES")
     findquiz_window.geometry("1210x590")
     findquiz_window.configure(bg='gray86')
 
-    #build user1s quiz
-    user1frame = LabelFrame(findquiz_window, text="AUTHOR: "+usr1name, padx=5, pady=5, bg='gray86')
-    user1frame.grid(sticky='nswe')
-    user1frame.config(font=("fixedsys", 14))
-    user1frame.grid(row=0, column=0)
-    #quiz name
-    user1_desc_lbl = Label(user1frame, text="QUIZ NAME: "+user1qname, pady=10, bg='gray86')
-    user1_desc_lbl.config(font=("fixedsys", 12))
-    user1_desc_lbl.pack()
-    #descrip
-    user1_desc_lbl = Label(user1frame, text="QUIZ DESCRIPTION: "+user1desc, pady=10, bg='gray86')
-    user1_desc_lbl.config(font=("fixedsys", 12))
-    user1_desc_lbl.pack()
-    #take quiz btn
-    usr1_button = Button(user1frame,text="TAKE QUIZ",command=lambda:[quizform(usr1name,user1qname)], bg='SeaGreen1')
-    usr1_button.config(font=("fixedsys", 12))
-    usr1_button.pack()
 
-    #build user2s quiz-------------
-    user2frame = LabelFrame(findquiz_window, text="AUTHOR: "+usr2name, padx=5, pady=5, bg='gray86')
-    user2frame.grid(sticky='nswe')
-    user2frame.config(font=("fixedsys", 14))
-    user2frame.grid(row=0, column=1)
-    #quiz name
-    user2_desc_lbl = Label(user2frame, text="QUIZ NAME: "+user2qname, pady=10, bg='gray86')
-    user2_desc_lbl.config(font=("fixedsys", 12))
-    user2_desc_lbl.pack()
-    #descrip
-    user2_desc_lbl = Label(user2frame, text="QUIZ DESCRIPTION: "+user2desc, pady=10, bg='gray86')
-    user2_desc_lbl.config(font=("fixedsys", 12))
-    user2_desc_lbl.pack()
-    #take quiz btn
-    usr2_button = Button(user2frame,text="TAKE QUIZ",command=lambda:[quizform(usr2name,user2qname)], bg='SeaGreen1')
-    usr2_button.config(font=("fixedsys", 12))
-    usr2_button.pack()
 
-#-------------------------------------------------------------------------------
+
+    if len(act_tables_with_quizzes) == 1:
+        usr1name = act_tables_with_quizzes[0][:-8]
+        user1data = pd.read_sql_query("Select * from dbo."+act_tables_with_quizzes[0], conn)
+        user1desc = user1data['description'].values[0]
+        user1qname = user1data['roster_name'].values[0]
+        user1frame = LabelFrame(findquiz_window, text="AUTHOR: "+usr1name, padx=5, pady=5, bg='gray86')
+        user1frame.grid(sticky='nswe')
+        user1frame.config(font=("fixedsys", 14))
+        user1frame.grid(row=0, column=0)
+        #quiz name
+        user1_desc_lbl = Label(user1frame, text="QUIZ NAME: "+user1qname, pady=10, bg='gray86')
+        user1_desc_lbl.config(font=("fixedsys", 12))
+        user1_desc_lbl.pack()
+        #descrip
+        user1_desc_lbl = Label(user1frame, text="QUIZ DESCRIPTION: "+user1desc, pady=10, bg='gray86')
+        user1_desc_lbl.config(font=("fixedsys", 12))
+        user1_desc_lbl.pack()
+        #take quiz btn
+        usr1_button = Button(user1frame,text="TAKE QUIZ",command=lambda:[quizform(usr1name,user1qname)], bg='SeaGreen1')
+        usr1_button.config(font=("fixedsys", 12))
+        usr1_button.pack()
+
+        return
+    if len(act_tables_with_quizzes) == 2:
+        usr1name = act_tables_with_quizzes[0][:-8]
+        usr2name = act_tables_with_quizzes[1][:-8]
+        user1data = pd.read_sql_query("Select * from dbo."+act_tables_with_quizzes[0], conn)
+        user2data = pd.read_sql_query("Select * from dbo."+act_tables_with_quizzes[1], conn)
+        user1desc = user1data['description'].values[0]
+        user1qname = user1data['roster_name'].values[0]
+        user2desc = user2data['description'].values[1]
+        user2qname = user2data['roster_name'].values[1]
+        user1frame = LabelFrame(findquiz_window, text="AUTHOR: "+usr1name, padx=5, pady=5, bg='gray86')
+        user1frame.grid(sticky='nswe')
+        user1frame.config(font=("fixedsys", 14))
+        user1frame.grid(row=0, column=0)
+        #quiz name
+        user1_desc_lbl = Label(user1frame, text="QUIZ NAME: "+user1qname, pady=10, bg='gray86')
+        user1_desc_lbl.config(font=("fixedsys", 12))
+        user1_desc_lbl.pack()
+        #descrip
+        user1_desc_lbl = Label(user1frame, text="QUIZ DESCRIPTION: "+user1desc, pady=10, bg='gray86')
+        user1_desc_lbl.config(font=("fixedsys", 12))
+        user1_desc_lbl.pack()
+        #take quiz btn
+        usr1_button = Button(user1frame,text="TAKE QUIZ",command=lambda:[quizform(usr1name,user1qname)], bg='SeaGreen1')
+        usr1_button.config(font=("fixedsys", 12))
+        usr1_button.pack()
+        user2frame = LabelFrame(findquiz_window, text="AUTHOR: "+usr2name, padx=5, pady=5, bg='gray86')
+        user2frame.grid(sticky='nswe')
+        user2frame.config(font=("fixedsys", 14))
+        user2frame.grid(row=0, column=1)
+        #quiz name
+        user2_desc_lbl = Label(user2frame, text="QUIZ NAME: "+user2qname, pady=10, bg='gray86')
+        user2_desc_lbl.config(font=("fixedsys", 12))
+        user2_desc_lbl.pack()
+        #descrip
+        user2_desc_lbl = Label(user2frame, text="QUIZ DESCRIPTION: "+user2desc, pady=10, bg='gray86')
+        user2_desc_lbl.config(font=("fixedsys", 12))
+        user2_desc_lbl.pack()
+        #take quiz btn
+        usr2_button = Button(user2frame,text="TAKE QUIZ",command=lambda:[quizform(usr2name,user2qname)], bg='SeaGreen1')
+        usr2_button.config(font=("fixedsys", 12))
+        usr2_button.pack()
+        return
+    if len(act_tables_with_quizzes) == 3:
+        usr1name = act_tables_with_quizzes[0][:-8]
+        usr2name = act_tables_with_quizzes[1][:-8]
+        usr2name = act_tables_with_quizzes[2][:-8]
+        user1data = pd.read_sql_query("Select * from dbo."+act_tables_with_quizzes[0], conn)
+        user2data = pd.read_sql_query("Select * from dbo."+act_tables_with_quizzes[1], conn)
+        user3data = pd.read_sql_query("Select * from dbo."+act_tables_with_quizzes[2], conn)
+        user1desc = user1data['description'].values[0]
+        user1qname = user1data['roster_name'].values[0]
+        user2desc = user2data['description'].values[1]
+        user2qname = user2data['roster_name'].values[1]
+        user3desc = user3data['description'].values[2]
+        user3qname = user3data['roster_name'].values[2]
+        user1frame = LabelFrame(findquiz_window, text="AUTHOR: "+usr1name, padx=5, pady=5, bg='gray86')
+        user1frame.grid(sticky='nswe')
+        user1frame.config(font=("fixedsys", 14))
+        user1frame.grid(row=0, column=0)
+
+        user1_desc_lbl = Label(user1frame, text="QUIZ NAME: "+user1qname, pady=10, bg='gray86')
+        user1_desc_lbl.config(font=("fixedsys", 12))
+        user1_desc_lbl.pack()
+        #descrip
+        user1_desc_lbl = Label(user1frame, text="QUIZ DESCRIPTION: "+user1desc, pady=10, bg='gray86')
+        user1_desc_lbl.config(font=("fixedsys", 12))
+        user1_desc_lbl.pack()
+        #take quiz btn
+        usr1_button = Button(user1frame,text="TAKE QUIZ",command=lambda:[quizform(usr1name,user1qname)], bg='SeaGreen1')
+        usr1_button.config(font=("fixedsys", 12))
+        usr1_button.pack()
+        user2frame = LabelFrame(findquiz_window, text="AUTHOR: "+usr2name, padx=5, pady=5, bg='gray86')
+        user2frame.grid(sticky='nswe')
+        user2frame.config(font=("fixedsys", 14))
+        user2frame.grid(row=0, column=1)
+        #quiz name
+        user2_desc_lbl = Label(user2frame, text="QUIZ NAME: "+user2qname, pady=10, bg='gray86')
+        user2_desc_lbl.config(font=("fixedsys", 12))
+        user2_desc_lbl.pack()
+        #descrip
+        user2_desc_lbl = Label(user2frame, text="QUIZ DESCRIPTION: "+user2desc, pady=10, bg='gray86')
+        user2_desc_lbl.config(font=("fixedsys", 12))
+        user2_desc_lbl.pack()
+        #take quiz btn
+        usr2_button = Button(user2frame,text="TAKE QUIZ",command=lambda:[quizform(usr2name,user2qname)], bg='SeaGreen1')
+        usr2_button.config(font=("fixedsys", 12))
+        usr2_button.pack()
+        #--
+        user3frame = LabelFrame(findquiz_window, text="AUTHOR: "+usr3name, padx=5, pady=5, bg='gray86')
+        user3frame.grid(sticky='nswe')
+        user3frame.config(font=("fixedsys", 14))
+        user3frame.grid(row=1, column=0)
+        #quiz name
+        user3_desc_lbl = Label(user3frame, text="QUIZ NAME: "+user3qname, pady=10, bg='gray86')
+        user3_desc_lbl.config(font=("fixedsys", 12))
+        user3_desc_lbl.pack()
+        #descrips
+        user3_desc_lbl = Label(user3frame, text="QUIZ DESCRIPTION: "+user3desc, pady=10, bg='gray86')
+        user3_desc_lbl.config(font=("fixedsys", 12))
+        user3_desc_lbl.pack()
+        #take quiz btn
+        usr3_button = Button(user3frame,text="TAKE QUIZ",command=lambda:[quizform(usr3name,user3qname)], bg='SeaGreen1')
+        usr3_button.config(font=("fixedsys", 12))
+        usr3_button.pack()
+        return
+    if len(act_tables_with_quizzes) == 4:
+        usr1name = act_tables_with_quizzes[0][:-8]
+        usr2name = act_tables_with_quizzes[1][:-8]
+        usr2name = act_tables_with_quizzes[2][:-8]
+        usr2name = act_tables_with_quizzes[3][:-8]
+        user1data = pd.read_sql_query("Select * from dbo."+act_tables_with_quizzes[0], conn)
+        user2data = pd.read_sql_query("Select * from dbo."+act_tables_with_quizzes[1], conn)
+        user3data = pd.read_sql_query("Select * from dbo."+act_tables_with_quizzes[2], conn)
+        user4data = pd.read_sql_query("Select * from dbo."+act_tables_with_quizzes[3], conn)
+        user1desc = user1data['description'].values[0]
+        user1qname = user1data['roster_name'].values[0]
+        user2desc = user2data['description'].values[1]
+        user2qname = user2data['roster_name'].values[1]
+        user3desc = user3data['description'].values[2]
+        user3qname = user3data['roster_name'].values[2]
+        user4desc = user4data['description'].values[3]
+        user4qname = user4data['roster_name'].values[3]
+        user1_desc_lbl = Label(user1frame, text="QUIZ NAME: "+user1qname, pady=10, bg='gray86')
+        user1_desc_lbl.config(font=("fixedsys", 12))
+        user1_desc_lbl.pack()
+        #descrip
+        user1_desc_lbl = Label(user1frame, text="QUIZ DESCRIPTION: "+user1desc, pady=10, bg='gray86')
+        user1_desc_lbl.config(font=("fixedsys", 12))
+        user1_desc_lbl.pack()
+        #take quiz btn
+        usr1_button = Button(user1frame,text="TAKE QUIZ",command=lambda:[quizform(usr1name,user1qname)], bg='SeaGreen1')
+        usr1_button.config(font=("fixedsys", 12))
+        usr1_button.pack()
+        user2frame = LabelFrame(findquiz_window, text="AUTHOR: "+usr2name, padx=5, pady=5, bg='gray86')
+        user2frame.grid(sticky='nswe')
+        user2frame.config(font=("fixedsys", 14))
+        user2frame.grid(row=0, column=1)
+        #quiz name
+        user2_desc_lbl = Label(user2frame, text="QUIZ NAME: "+user2qname, pady=10, bg='gray86')
+        user2_desc_lbl.config(font=("fixedsys", 12))
+        user2_desc_lbl.pack()
+        #descrip
+        user2_desc_lbl = Label(user2frame, text="QUIZ DESCRIPTION: "+user2desc, pady=10, bg='gray86')
+        user2_desc_lbl.config(font=("fixedsys", 12))
+        user2_desc_lbl.pack()
+        #take quiz btn
+        usr2_button = Button(user2frame,text="TAKE QUIZ",command=lambda:[quizform(usr2name,user2qname)], bg='SeaGreen1')
+        usr2_button.config(font=("fixedsys", 12))
+        usr2_button.pack()
+        #--
+        user3frame = LabelFrame(findquiz_window, text="AUTHOR: "+usr3name, padx=5, pady=5, bg='gray86')
+        user3frame.grid(sticky='nswe')
+        user3frame.config(font=("fixedsys", 14))
+        user3frame.grid(row=1, column=0)
+        #quiz name
+        user3_desc_lbl = Label(user3frame, text="QUIZ NAME: "+user3qname, pady=10, bg='gray86')
+        user3_desc_lbl.config(font=("fixedsys", 12))
+        user3_desc_lbl.pack()
+        #descrips
+        user3_desc_lbl = Label(user3frame, text="QUIZ DESCRIPTION: "+user3desc, pady=10, bg='gray86')
+        user3_desc_lbl.config(font=("fixedsys", 12))
+        user3_desc_lbl.pack()
+        #take quiz btn
+        usr3_button = Button(user3frame,text="TAKE QUIZ",command=lambda:[quizform(usr3name,user3qname)], bg='SeaGreen1')
+        usr3_button.config(font=("fixedsys", 12))
+        usr3_button.pack()
+        #--
+        user4frame = LabelFrame(findquiz_window, text="AUTHOR: "+usr4name, padx=5, pady=5, bg='gray86')
+        user4frame.grid(sticky='nswe')
+        user4frame.config(font=("fixedsys", 14))
+        user4frame.grid(row=1, column=1)
+        #quiz name
+        user4_desc_lbl = Label(user4frame, text="QUIZ NAME: "+user4qname, pady=10, bg='gray86')
+        user4_desc_lbl.config(font=("fixedsys", 12))
+        user4_desc_lbl.pack()
+        #descrips
+        user4_desc_lbl = Label(user4frame, text="QUIZ DESCRIPTION: "+user4desc, pady=10, bg='gray86')
+        user4_desc_lbl.config(font=("fixedsys", 12))
+        user4_desc_lbl.pack()
+        #take quiz btn
+        usr4_button = Button(user4frame,text="TAKE QUIZ",command=lambda:[quizform(usr4name,user4qname)], bg='SeaGreen1')
+        usr4_button.config(font=("fixedsys", 12))
+        usr4_button.pack()
+        return
+    if len(act_tables_with_quizzes) == 5:
+        usr1name = act_tables_with_quizzes[0][:-8]
+        usr2name = act_tables_with_quizzes[1][:-8]
+        usr2name = act_tables_with_quizzes[2][:-8]
+        usr2name = act_tables_with_quizzes[3][:-8]
+        usr2name = act_tables_with_quizzes[4][:-8]
+        user1data = pd.read_sql_query("Select * from dbo."+act_tables_with_quizzes[0], conn)
+        user2data = pd.read_sql_query("Select * from dbo."+act_tables_with_quizzes[1], conn)
+        user3data = pd.read_sql_query("Select * from dbo."+act_tables_with_quizzes[2], conn)
+        user4data = pd.read_sql_query("Select * from dbo."+act_tables_with_quizzes[3], conn)
+        user5data = pd.read_sql_query("Select * from dbo."+act_tables_with_quizzes[4], conn)
+        user1desc = user1data['description'].values[0]
+        user1qname = user1data['roster_name'].values[0]
+        user2desc = user2data['description'].values[1]
+        user2qname = user2data['roster_name'].values[1]
+        user3desc = user3data['description'].values[2]
+        user3qname = user3data['roster_name'].values[2]
+        user4desc = user4data['description'].values[3]
+        user4qname = user4data['roster_name'].values[3]
+        user5desc = user5data['description'].values[4]
+        user5qname = user5data['roster_name'].values[4]
+        user1_desc_lbl = Label(user1frame, text="QUIZ NAME: "+user1qname, pady=10, bg='gray86')
+        user1_desc_lbl.config(font=("fixedsys", 12))
+        user1_desc_lbl.pack()
+        #descrip
+        user1_desc_lbl = Label(user1frame, text="QUIZ DESCRIPTION: "+user1desc, pady=10, bg='gray86')
+        user1_desc_lbl.config(font=("fixedsys", 12))
+        user1_desc_lbl.pack()
+        #take quiz btn
+        usr1_button = Button(user1frame,text="TAKE QUIZ",command=lambda:[quizform(usr1name,user1qname)], bg='SeaGreen1')
+        usr1_button.config(font=("fixedsys", 12))
+        usr1_button.pack()
+        user2frame = LabelFrame(findquiz_window, text="AUTHOR: "+usr2name, padx=5, pady=5, bg='gray86')
+        user2frame.grid(sticky='nswe')
+        user2frame.config(font=("fixedsys", 14))
+        user2frame.grid(row=0, column=1)
+        #quiz name
+        user2_desc_lbl = Label(user2frame, text="QUIZ NAME: "+user2qname, pady=10, bg='gray86')
+        user2_desc_lbl.config(font=("fixedsys", 12))
+        user2_desc_lbl.pack()
+        #descrip
+        user2_desc_lbl = Label(user2frame, text="QUIZ DESCRIPTION: "+user2desc, pady=10, bg='gray86')
+        user2_desc_lbl.config(font=("fixedsys", 12))
+        user2_desc_lbl.pack()
+        #take quiz btn
+        usr2_button = Button(user2frame,text="TAKE QUIZ",command=lambda:[quizform(usr2name,user2qname)], bg='SeaGreen1')
+        usr2_button.config(font=("fixedsys", 12))
+        usr2_button.pack()
+        #--
+        user3frame = LabelFrame(findquiz_window, text="AUTHOR: "+usr3name, padx=5, pady=5, bg='gray86')
+        user3frame.grid(sticky='nswe')
+        user3frame.config(font=("fixedsys", 14))
+        user3frame.grid(row=1, column=0)
+        #quiz name
+        user3_desc_lbl = Label(user3frame, text="QUIZ NAME: "+user3qname, pady=10, bg='gray86')
+        user3_desc_lbl.config(font=("fixedsys", 12))
+        user3_desc_lbl.pack()
+        #descrips
+        user3_desc_lbl = Label(user3frame, text="QUIZ DESCRIPTION: "+user3desc, pady=10, bg='gray86')
+        user3_desc_lbl.config(font=("fixedsys", 12))
+        user3_desc_lbl.pack()
+        #take quiz btn
+        usr3_button = Button(user3frame,text="TAKE QUIZ",command=lambda:[quizform(usr3name,user3qname)], bg='SeaGreen1')
+        usr3_button.config(font=("fixedsys", 12))
+        usr3_button.pack()
+        #--
+        user4frame = LabelFrame(findquiz_window, text="AUTHOR: "+usr4name, padx=5, pady=5, bg='gray86')
+        user4frame.grid(sticky='nswe')
+        user4frame.config(font=("fixedsys", 14))
+        user4frame.grid(row=1, column=1)
+        #quiz name
+        user4_desc_lbl = Label(user4frame, text="QUIZ NAME: "+user4qname, pady=10, bg='gray86')
+        user4_desc_lbl.config(font=("fixedsys", 12))
+        user4_desc_lbl.pack()
+        #descrips
+        user4_desc_lbl = Label(user4frame, text="QUIZ DESCRIPTION: "+user4desc, pady=10, bg='gray86')
+        user4_desc_lbl.config(font=("fixedsys", 12))
+        user4_desc_lbl.pack()
+        #take quiz btn
+        usr4_button = Button(user4frame,text="TAKE QUIZ",command=lambda:[quizform(usr4name,user4qname)], bg='SeaGreen1')
+        usr4_button.config(font=("fixedsys", 12))
+        usr4_button.pack()
+        #--
+        user5frame = LabelFrame(findquiz_window, text="AUTHOR: "+usr5name, padx=5, pady=5, bg='gray86')
+        user5frame.grid(sticky='nswe')
+        user5frame.config(font=("fixedsys", 14))
+        user5frame.grid(row=2, column=0)
+        #quiz name
+        user5_desc_lbl = Label(user5frame, text="QUIZ NAME: "+user5qname, pady=10, bg='gray86')
+        user5_desc_lbl.config(font=("fixedsys", 12))
+        user5_desc_lbl.pack()
+        #descrips
+        user5_desc_lbl = Label(user5frame, text="QUIZ DESCRIPTION: "+user5desc, pady=10, bg='gray86')
+        user5_desc_lbl.config(font=("fixedsys", 12))
+        user5_desc_lbl.pack()
+        #take quiz btn
+        usr5_button = Button(user5frame,text="TAKE QUIZ",command=lambda:[quizform(usr5name,user5qname)], bg='SeaGreen1')
+        usr5_button.config(font=("fixedsys", 12))
+        usr5_button.pack()
+        return
+    if len(act_tables_with_quizzes) == 6:
+        usr1name = act_tables_with_quizzes[0][:-8]
+        usr2name = act_tables_with_quizzes[1][:-8]
+        usr2name = act_tables_with_quizzes[2][:-8]
+        usr2name = act_tables_with_quizzes[3][:-8]
+        usr2name = act_tables_with_quizzes[4][:-8]
+        usr2name = act_tables_with_quizzes[5][:-8]
+        user1data = pd.read_sql_query("Select * from dbo."+act_tables_with_quizzes[0], conn)
+        user2data = pd.read_sql_query("Select * from dbo."+act_tables_with_quizzes[1], conn)
+        user3data = pd.read_sql_query("Select * from dbo."+act_tables_with_quizzes[2], conn)
+        user4data = pd.read_sql_query("Select * from dbo."+act_tables_with_quizzes[3], conn)
+        user5data = pd.read_sql_query("Select * from dbo."+act_tables_with_quizzes[4], conn)
+        user6data = pd.read_sql_query("Select * from dbo."+act_tables_with_quizzes[5], conn)
+        user1desc = user1data['description'].values[0]
+        user1qname = user1data['roster_name'].values[0]
+        user2desc = user2data['description'].values[1]
+        user2qname = user2data['roster_name'].values[1]
+        user3desc = user3data['description'].values[2]
+        user3qname = user3data['roster_name'].values[2]
+        user4desc = user4data['description'].values[3]
+        user4qname = user4data['roster_name'].values[3]
+        user5desc = user5data['description'].values[4]
+        user5qname = user5data['roster_name'].values[4]
+        user6desc = user6data['description'].values[5]
+        user6qname = user6data['roster_name'].values[5]
+        user1_desc_lbl = Label(user1frame, text="QUIZ NAME: "+user1qname, pady=10, bg='gray86')
+        user1_desc_lbl.config(font=("fixedsys", 12))
+        user1_desc_lbl.pack()
+        #descrip
+        user1_desc_lbl = Label(user1frame, text="QUIZ DESCRIPTION: "+user1desc, pady=10, bg='gray86')
+        user1_desc_lbl.config(font=("fixedsys", 12))
+        user1_desc_lbl.pack()
+        #take quiz btn
+        usr1_button = Button(user1frame,text="TAKE QUIZ",command=lambda:[quizform(usr1name,user1qname)], bg='SeaGreen1')
+        usr1_button.config(font=("fixedsys", 12))
+        usr1_button.pack()
+        user2frame = LabelFrame(findquiz_window, text="AUTHOR: "+usr2name, padx=5, pady=5, bg='gray86')
+        user2frame.grid(sticky='nswe')
+        user2frame.config(font=("fixedsys", 14))
+        user2frame.grid(row=0, column=1)
+        #quiz name
+        user2_desc_lbl = Label(user2frame, text="QUIZ NAME: "+user2qname, pady=10, bg='gray86')
+        user2_desc_lbl.config(font=("fixedsys", 12))
+        user2_desc_lbl.pack()
+        #descrip
+        user2_desc_lbl = Label(user2frame, text="QUIZ DESCRIPTION: "+user2desc, pady=10, bg='gray86')
+        user2_desc_lbl.config(font=("fixedsys", 12))
+        user2_desc_lbl.pack()
+        #take quiz btn
+        usr2_button = Button(user2frame,text="TAKE QUIZ",command=lambda:[quizform(usr2name,user2qname)], bg='SeaGreen1')
+        usr2_button.config(font=("fixedsys", 12))
+        usr2_button.pack()
+        #--
+        user3frame = LabelFrame(findquiz_window, text="AUTHOR: "+usr3name, padx=5, pady=5, bg='gray86')
+        user3frame.grid(sticky='nswe')
+        user3frame.config(font=("fixedsys", 14))
+        user3frame.grid(row=1, column=0)
+        #quiz name
+        user3_desc_lbl = Label(user3frame, text="QUIZ NAME: "+user3qname, pady=10, bg='gray86')
+        user3_desc_lbl.config(font=("fixedsys", 12))
+        user3_desc_lbl.pack()
+        #descrips
+        user3_desc_lbl = Label(user3frame, text="QUIZ DESCRIPTION: "+user3desc, pady=10, bg='gray86')
+        user3_desc_lbl.config(font=("fixedsys", 12))
+        user3_desc_lbl.pack()
+        #take quiz btn
+        usr3_button = Button(user3frame,text="TAKE QUIZ",command=lambda:[quizform(usr3name,user3qname)], bg='SeaGreen1')
+        usr3_button.config(font=("fixedsys", 12))
+        usr3_button.pack()
+        #--
+        user4frame = LabelFrame(findquiz_window, text="AUTHOR: "+usr4name, padx=5, pady=5, bg='gray86')
+        user4frame.grid(sticky='nswe')
+        user4frame.config(font=("fixedsys", 14))
+        user4frame.grid(row=1, column=1)
+        #quiz name
+        user4_desc_lbl = Label(user4frame, text="QUIZ NAME: "+user4qname, pady=10, bg='gray86')
+        user4_desc_lbl.config(font=("fixedsys", 12))
+        user4_desc_lbl.pack()
+        #descrips
+        user4_desc_lbl = Label(user4frame, text="QUIZ DESCRIPTION: "+user4desc, pady=10, bg='gray86')
+        user4_desc_lbl.config(font=("fixedsys", 12))
+        user4_desc_lbl.pack()
+        #take quiz btn
+        usr4_button = Button(user4frame,text="TAKE QUIZ",command=lambda:[quizform(usr4name,user4qname)], bg='SeaGreen1')
+        usr4_button.config(font=("fixedsys", 12))
+        usr4_button.pack()
+        #--
+        user5frame = LabelFrame(findquiz_window, text="AUTHOR: "+usr5name, padx=5, pady=5, bg='gray86')
+        user5frame.grid(sticky='nswe')
+        user5frame.config(font=("fixedsys", 14))
+        user5frame.grid(row=2, column=0)
+        #quiz name
+        user5_desc_lbl = Label(user5frame, text="QUIZ NAME: "+user5qname, pady=10, bg='gray86')
+        user5_desc_lbl.config(font=("fixedsys", 12))
+        user5_desc_lbl.pack()
+        #descrips
+        user5_desc_lbl = Label(user5frame, text="QUIZ DESCRIPTION: "+user5desc, pady=10, bg='gray86')
+        user5_desc_lbl.config(font=("fixedsys", 12))
+        user5_desc_lbl.pack()
+        #take quiz btn
+        usr5_button = Button(user5frame,text="TAKE QUIZ",command=lambda:[quizform(usr5name,user5qname)], bg='SeaGreen1')
+        usr5_button.config(font=("fixedsys", 12))
+        usr5_button.pack()
+        #--
+        user6frame = LabelFrame(findquiz_window, text="AUTHOR: "+usr6name, padx=5, pady=5, bg='gray86')
+        user6frame.grid(sticky='nswe')
+        user6frame.config(font=("fixedsys", 14))
+        user6frame.grid(row=2, column=1)
+        #quiz name
+        user6_desc_lbl = Label(user6frame, text="QUIZ NAME: "+user6qname, pady=10, bg='gray86')
+        user6_desc_lbl.config(font=("fixedsys", 12))
+        user6_desc_lbl.pack()
+        #descrips
+        user6_desc_lbl = Label(user6frame, text="QUIZ DESCRIPTION: "+user6desc, pady=10, bg='gray86')
+        user6_desc_lbl.config(font=("fixedsys", 12))
+        user6_desc_lbl.pack()
+        #take quiz btn
+        usr6_button = Button(user6frame,text="TAKE QUIZ",command=lambda:[quizform(usr6name,user6qname)], bg='SeaGreen1')
+        usr6_button.config(font=("fixedsys", 12))
+        usr6_button.pack()
+        return
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    #the list in the line above is a list of tables with quizzes in them
+    #print(act_tables_with_quizzes)
+    #usr1name = act_tables_with_quizzes[0][:-8]
+    #print(usr1name)
+    #usr2name = act_tables_with_quizzes[1][:-8]
+
+    #user1data = pd.read_sql_query("Select * from dbo."+act_tables_with_quizzes[0], conn)
+    #print(user1data)#this return the first users quiz data
+    #user1desc = user1data['description'].values[0]
+    #user1qname = user1data['roster_name'].values[0]
+    #user2data = pd.read_sql_query("Select * from dbo."+act_tables_with_quizzes[1], conn)
+    #print(user2data)#this return the first users quiz data
+    #user2desc = user2data['description'].values[0]
+    #user2qname = user2data['roster_name'].values[0]
+
+
+    #findquiz_window = Toplevel()
+    #findquiz_window.title("AVAILABLE QUIZZES")
+    #findquiz_window.geometry("1210x590")
+    #findquiz_window.configure(bg='gray86')
+
+    ##build user1s quiz
+    #user1frame = LabelFrame(findquiz_window, text="AUTHOR: "+usr1name, padx=5, pady=5, bg='gray86')
+    #user1frame.grid(sticky='nswe')
+    #user1frame.config(font=("fixedsys", 14))
+    #user1frame.grid(row=0, column=0)
+    ##quiz name
+    #user1_desc_lbl = Label(user1frame, text="QUIZ NAME: "+user1qname, pady=10, bg='gray86')
+    #user1_desc_lbl.config(font=("fixedsys", 12))
+    #user1_desc_lbl.pack()
+    ##descrip
+    #user1_desc_lbl = Label(user1frame, text="QUIZ DESCRIPTION: "+user1desc, pady=10, bg='gray86')
+    #user1_desc_lbl.config(font=("fixedsys", 12))
+    #user1_desc_lbl.pack()
+    ##take quiz btn
+    #usr1_button = Button(user1frame,text="TAKE QUIZ",command=lambda:[quizform(usr1name,user1qname)], bg='SeaGreen1')
+    #usr1_button.config(font=("fixedsys", 12))
+    #usr1_button.pack()
+
+    ##build user2s quiz-------------
+    #user2frame = LabelFrame(findquiz_window, text="AUTHOR: "+usr2name, padx=5, pady=5, bg='gray86')
+    #user2frame.grid(sticky='nswe')
+    #user2frame.config(font=("fixedsys", 14))
+    #user2frame.grid(row=0, column=1)
+    ##quiz name
+    #user2_desc_lbl = Label(user2frame, text="QUIZ NAME: "+user2qname, pady=10, bg='gray86')
+    #user2_desc_lbl.config(font=("fixedsys", 12))
+    #user2_desc_lbl.pack()
+    ##descrip
+    #user2_desc_lbl = Label(user2frame, text="QUIZ DESCRIPTION: "+user2desc, pady=10, bg='gray86')
+    #user2_desc_lbl.config(font=("fixedsys", 12))
+    #user2_desc_lbl.pack()
+    ##take quiz btn
+    #usr2_button = Button(user2frame,text="TAKE QUIZ",command=lambda:[quizform(usr2name,user2qname)], bg='SeaGreen1')
+    #usr2_button.config(font=("fixedsys", 12))
+    #usr2_button.pack()
+
+#---#----------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
 #builds the quiz form!!!
@@ -886,6 +1352,7 @@ def quizform(quiz_author, quiz_name):
         hintlbl2.grid(row=1, column=2, sticky='w')
         hintlbl3 = Label(thequiz_window,text="HINT: "+hint3,bg='khaki')
         hintlbl3.config(font=("fixedsys", 12))
+        hintlbl3.grid(row=2, column=2, sticky='w')
     if len(quizdata.index) == 4:
         #answers
         answer1 = quizdata['Player Name'].values[0]
