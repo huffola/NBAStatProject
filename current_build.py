@@ -21,6 +21,7 @@ users = []
 passes = []
 actualuser = []
 player_hints = []
+descriptions = []
 loginwin = Tk()
 loginwin.title("Provide Login Credentials")
 loginwin.configure(bg='gray10')
@@ -63,7 +64,7 @@ def create_new(usr, pas):
     user = (usr + "_rosters")
 
     cursor.execute("INSERT INTO user_data (Username, drowssap, [ip address]) VALUES ('"+usr+"', '"+pas+"', '')")
-    cursor.execute("CREATE TABLE " +user+ " (roster_name nchar(15), [Player Name] varchar(50), Player_Hint varchar(MAX));")
+    cursor.execute("CREATE TABLE " +user+ " (roster_name nchar(15), [Player Name] varchar(50), [Player_Hint] varchar(MAX), [description] varchar(MAX));")
     conn.commit()
     #----GUI FOR SUCCESS MESSAGE-----
     anewwindow = Toplevel()
@@ -147,7 +148,7 @@ all_categories = ['SELECT ALL','Age','Team','Games Played','Games Started','Minu
                 'Total Rebounds Per Game','Assists Per Game','Steals Per Game','Blocks Per Game',
                 'Turnovers Per Game','Personal Fouls Per Game','Points Per Game']
 user_selected_categories =[]
-rosters = ["MY ROSTERS"]
+rosters = ["MY QUIZZES"]
 indexable_rosters = []
 team_affil = []
 user_tables = []
@@ -221,12 +222,31 @@ def another_format(list):
 #--SELECTS CORRECT TEAM AFFLIATION FOR PLAYER-----------------------------------
 def add_to_team(var):
     pass
-#---CREATES NEW ROSTER AND OVERWRITES MY ROSTERS DROPDOWN-----------------------
+#---CREATES NEW ROSTER AND OVERWRITES MY QUIZZES DROPDOWN-----------------------
 def new_roster():
+
+    #make a new window to write a short quiz description -----------------------
+    desc_window = Toplevel()
+    desc_window.title("DESCRIPTION")
+    desc_window.configure(bg='gray86')
+
+    quiz_desc = Label(desc_window, text="Write a descriptino: ", pady=10, bg='gray86')
+    quiz_desc.config(font=("fixedsys", 12))
+    quiz_desc.grid(row=0, column=0, rowspan=2, sticky='w')
+
+    global desc
+    desc = Entry(desc_window, width=30, borderwidth=2, bg='gray50', fg='white smoke')
+    desc.config(font=("fixedsys", 12))
+    desc.grid(row=0, column=1,rowspan=2, sticky='w')
+
+    apply_desc = Button(desc_window, text="SUBMIT",command=lambda:[add_description(n.get(), desc.get())], bg='light slate gray', bd=2, fg='gray90')
+    apply_desc.config(font=("fixedsys", 12), width=25)
+    apply_desc.grid(row=0, column=2,rowspan=2, sticky='w')
+#-----
     if n.get() not in rosters:
         rosters.append(n.get())
-        if "MY ROSTERS" in rosters:
-            rosters.remove("MY ROSTERS")
+        if "MY QUIZZES" in rosters:
+            rosters.remove("MY QUIZZES")
     if n.get() not in indexable_rosters:
         indexable_rosters.append([n.get()])
 
@@ -467,8 +487,8 @@ def card_builder():
     player_ppg.config(font=("fixedsys", 12))
     player_ppg.grid(row=4, column=0,sticky='w')
 
-    if "MY ROSTERS" in rosters:
-        rosters.remove("MY ROSTERS")
+    if "MY QUIZZES" in rosters:
+        rosters.remove("MY QUIZZES")
     global clickert
     clickert = StringVar()
     clickert.set("CHOOSE ROSTER")
@@ -511,6 +531,10 @@ def addto_playerhints(name, hint):
     player_hints.append(name)
     player_hints.append(hint)
     print(player_hints)
+def add_description(rosname, descrip):
+    descriptions.append(rosname)
+    descriptions.append(descrip)
+    print(descriptions)
 #--ADDS THE PLAYER HINT TO THE DB-----------------------------------------------
 def hint_to_db(actualhint):
     global dahint
@@ -638,8 +662,16 @@ def sav_rosters():
         p += 2
         if p >= len(player_hints):
             break
-    #print(dahint)
-    #hint_to_db(dahint)
+
+    z = 0
+    q = 1
+    while True:
+        cursor.execute(("UPDATE [dbo]."+userglobal+"_rosters SET [description] = '"+descriptions[q]+"' WHERE [roster_name] LIKE '%"+descriptions[z]+"%';"))
+        q += 2
+        z += 2
+        if z >= len(descriptions):
+            break
+
     conn.commit()#commits changes to the database
 #--DELETES DESIRED ROSTER   (NEEDS A REWORK AT SOME POINT)----------------------
 def del_rosters(val):
@@ -659,7 +691,7 @@ def del_rosters(val):
     conn.commit()
     indexable_rosters.clear()
     rosters.clear()
-    rosters.append("MY ROSTERS")
+    rosters.append("MY QUIZZES")
     logged_in()
 #--ENCAPSULATES ENTRY FIELDS IN "[]" IN PREP FOR SQL QUERY----------------------
 def formatList(s):
@@ -670,6 +702,35 @@ def formatList(s):
         str1 += (str3 + ele + str2)
     str1 = str1[:-2]
     return str1
+
+
+
+
+
+#-----BUILDING NEW WINDOW TO DISPLAY AVAILABLE QUIZZES--------------------------
+#-------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
+def find_quiz():
+    findquiz_window = Toplevel()
+    findquiz_window.title("AVAILABLE QUIZZES")
+    findquiz_window.geometry("1210x590")
+    findquiz_window.configure(bg='gray86')
+
+    usrnm = Label(findquiz_window, text="---TO TAKE A QUIZ SELECT ANY OF THE AUTHORS LISTED BELOW "+
+    "TO REVEAL THEIR CREATED QUIZZES---", pady=10, bg='gray86')
+    usrnm.config(font=("fixedsys", 12))
+    usrnm.grid(row=0, column=0, sticky = 'e')
+
+
+#-------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
+
+
+
+
+
 #--IF RETURNING USER, GRABS ROSTERS SPECIFIC TO THE USER FROM THE SERVER--------
 def logged_in():
     if len(actualuser) == 0:
@@ -859,7 +920,11 @@ create_rost = Button(root,text="CREATE:", command=new_roster, bg='gray86')
 create_rost.config(font=("fixedsys", 12))
 create_rost.grid(row=1, column=5)
 
-player_name = Label(root, text="PLAYER NAME:", pady=10, bg='gray86')
+findquiz = Button(root,text="FIND A QUIZ:",command=find_quiz, bg='SeaGreen1')#command=find_quiz
+findquiz.config(font=("fixedsys", 12))
+findquiz.grid(row=1, column=6, columnspan=2, rowspan=2, sticky = 'nswe', padx=10)
+
+player_name = Label(root, text="ADD PLAYER:", pady=10, bg='gray86')
 player_name.config(font=("fixedsys", 14))
 player_name.grid(row=2, column=3, sticky = 'nswe')
 
