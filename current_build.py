@@ -230,7 +230,7 @@ def new_roster():
     desc_window.title("DESCRIPTION")
     desc_window.configure(bg='gray86')
 
-    quiz_desc = Label(desc_window, text="Write a descriptino: ", pady=10, bg='gray86')
+    quiz_desc = Label(desc_window, text="Write a description: ", pady=10, bg='gray86')
     quiz_desc.config(font=("fixedsys", 12))
     quiz_desc.grid(row=0, column=0, rowspan=2, sticky='w')
 
@@ -712,25 +712,299 @@ def formatList(s):
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
 def find_quiz():
+    quiz_author = []
+    quiz_name = []
+    quiz_hint = []
+    quiz_description = []
+    pot_tables_with_quizzes = []
+    #here we are starting to fetch all available quiz data from the database and fill it into lists for manipulation
+    the_tables = pd.read_sql_query("Select * from INFORMATION_SCHEMA.TABLES", conn)
+    print(the_tables)
+    tcount = len(the_tables.index)
+    i =0
+    while True:
+        pot_tables_with_quizzes.append(the_tables['TABLE_NAME'].values[i])
+        i += 1
+        if i >= tcount:
+            break
+    act_tables_with_quizzes = [s for s in pot_tables_with_quizzes if "_rosters" in s]
+    #the list in the line above is a list of tables with quizzes in them
+    print(act_tables_with_quizzes)
+    usr1name = act_tables_with_quizzes[0][:-8]
+    print(usr1name)
+    usr2name = act_tables_with_quizzes[1][:-8]
+
+    user1data = pd.read_sql_query("Select * from dbo."+act_tables_with_quizzes[0], conn)
+    print(user1data)#this return the first users quiz data
+    user1desc = user1data['description'].values[0]
+    user1qname = user1data['roster_name'].values[0]
+    user2data = pd.read_sql_query("Select * from dbo."+act_tables_with_quizzes[1], conn)
+    print(user2data)#this return the first users quiz data
+    user2desc = user2data['description'].values[0]
+    user2qname = user2data['roster_name'].values[0]
     findquiz_window = Toplevel()
     findquiz_window.title("AVAILABLE QUIZZES")
     findquiz_window.geometry("1210x590")
     findquiz_window.configure(bg='gray86')
 
-    usrnm = Label(findquiz_window, text="---TO TAKE A QUIZ SELECT ANY OF THE AUTHORS LISTED BELOW "+
-    "TO REVEAL THEIR CREATED QUIZZES---", pady=10, bg='gray86')
-    usrnm.config(font=("fixedsys", 12))
-    usrnm.grid(row=0, column=0, sticky = 'e')
+    #build user1s quiz
+    user1frame = LabelFrame(findquiz_window, text="AUTHOR: "+usr1name, padx=5, pady=5, bg='gray86')
+    user1frame.grid(sticky='nswe')
+    user1frame.config(font=("fixedsys", 14))
+    user1frame.grid(row=0, column=0)
+    #quiz name
+    user1_desc_lbl = Label(user1frame, text="QUIZ NAME: "+user1qname, pady=10, bg='gray86')
+    user1_desc_lbl.config(font=("fixedsys", 12))
+    user1_desc_lbl.pack()
+    #descrip
+    user1_desc_lbl = Label(user1frame, text="QUIZ DESCRIPTION: "+user1desc, pady=10, bg='gray86')
+    user1_desc_lbl.config(font=("fixedsys", 12))
+    user1_desc_lbl.pack()
+    #take quiz btn
+    usr1_button = Button(user1frame,text="TAKE QUIZ",command=lambda:[quizform(usr1name,user1qname)], bg='SeaGreen1')
+    usr1_button.config(font=("fixedsys", 12))
+    usr1_button.pack()
 
+    #build user2s quiz-------------
+    user2frame = LabelFrame(findquiz_window, text="AUTHOR: "+usr2name, padx=5, pady=5, bg='gray86')
+    user2frame.grid(sticky='nswe')
+    user2frame.config(font=("fixedsys", 14))
+    user2frame.grid(row=0, column=1)
+    #quiz name
+    user2_desc_lbl = Label(user2frame, text="QUIZ NAME: "+user2qname, pady=10, bg='gray86')
+    user2_desc_lbl.config(font=("fixedsys", 12))
+    user2_desc_lbl.pack()
+    #descrip
+    user2_desc_lbl = Label(user2frame, text="QUIZ DESCRIPTION: "+user2desc, pady=10, bg='gray86')
+    user2_desc_lbl.config(font=("fixedsys", 12))
+    user2_desc_lbl.pack()
+    #take quiz btn
+    usr2_button = Button(user2frame,text="TAKE QUIZ",command=lambda:[quizform(usr2name,user2qname)], bg='SeaGreen1')
+    usr2_button.config(font=("fixedsys", 12))
+    usr2_button.pack()
 
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
+#builds the quiz form!!!
+def quizform(quiz_author, quiz_name):
+    author_plus_rosters = quiz_author+"_rosters"
+    thequiz_window = Toplevel()
+    thequiz_window.title(quiz_name.upper())
+    thequiz_window.geometry("1210x590")
+    thequiz_window.configure(bg='gray86')
+    global answer1
+    global answer2
+    global answer3
+    global answer4
+    global answer5
+    quizdata = pd.read_sql_query("Select * from dbo."+author_plus_rosters, conn)
+    print(quizdata)
+    if len(quizdata.index) == 1:
+        #answers
+        answer1 = quizdata['Player Name'].values[0]
+        #hints
+        hint1 = quizdata['Player_Hint'].values[0]
+        #entries
+        entry1 = Entry(thequiz_window, width=30, borderwidth=2, bg='gray70')
+        entry1.config(font=("fixedsys", 12))
+        entry1.grid(row=0, column=0, sticky='w')
+        #btns
+        btn1 = Button(thequiz_window,text="SUBMIT",command=lambda:[iscorrect(entry1.get())],bg='SeaGreen1')
+        btn1.config(font=("fixedsys", 12))
+        btn1.grid(row=0, column=1, sticky='w')
+        #hintlbl
+        hintlbl1 = Label(thequiz_window,text="HINT: "+hint1,bg='khaki')
+        hintlbl1.config(font=("fixedsys", 12))
+        hintlbl1.grid(row=0, column=2, sticky='w')
 
+    if len(quizdata.index) == 2:
+        #answers
+        answer1 = quizdata['Player Name'].values[0]
+        answer1 = quizdata['Player Name'].values[1]
+        #hints
+        hint1 = quizdata['Player_Hint'].values[0]
+        hint2 = quizdata['Player_Hint'].values[1]
+        #entries
+        entry1 = Entry(thequiz_window, width=30, borderwidth=2, bg='gray70')
+        entry1.config(font=("fixedsys", 12))
+        entry1.grid(row=0, column=0, sticky='w')
+        entry2 = Entry(thequiz_window, width=30, borderwidth=2, bg='gray70')
+        entry2.config(font=("fixedsys", 12))
+        entry2.grid(row=1, column=0, sticky='w')
+        #btns
+        btn1 = Button(thequiz_window,text="SUBMIT",command=lambda:[iscorrect(entry1.get())],bg='SeaGreen1')
+        btn1.config(font=("fixedsys", 12))
+        btn1.grid(row=0, column=1, sticky='w')
+        btn2 = Button(thequiz_window,text="SUBMIT",command=lambda:[iscorrect(entry2.get())],bg='SeaGreen1')
+        btn2.config(font=("fixedsys", 12))
+        btn2.grid(row=1, column=1, sticky='w')
+        #hintlbl
+        hintlbl1 = Label(thequiz_window,text="HINT: "+hint1,bg='khaki')
+        hintlbl1.config(font=("fixedsys", 12))
+        hintlbl1.grid(row=0, column=2, sticky='w')
+        hintlbl2 = Label(thequiz_window,text="HINT: "+hint2,bg='khaki')
+        hintlbl2.config(font=("fixedsys", 12))
+        hintlbl2.grid(row=1, column=2, sticky='w')
+    if len(quizdata.index) == 3:
+        #answers
+        answer1 = quizdata['Player Name'].values[0]
+        answer2 = quizdata['Player Name'].values[1]
+        answer3 = quizdata['Player Name'].values[2]
+        #hints
+        hint1 = quizdata['Player_Hint'].values[0]
+        hint2 = quizdata['Player_Hint'].values[1]
+        hint3 = quizdata['Player_Hint'].values[2]
+        #entries
+        entry1 = Entry(thequiz_window, width=30, borderwidth=2, bg='gray70')
+        entry1.config(font=("fixedsys", 12))
+        entry1.grid(row=0, column=0, sticky='w')
+        entry2 = Entry(thequiz_window, width=30, borderwidth=2, bg='gray70')
+        entry2.config(font=("fixedsys", 12))
+        entry2.grid(row=1, column=0, sticky='w')
+        entry3 = Entry(thequiz_window, width=30, borderwidth=2, bg='gray70')
+        entry3.config(font=("fixedsys", 12))
+        entry3.grid(row=2, column=0, sticky='w')
+        #btns
+        btn1 = Button(thequiz_window,text="SUBMIT",command=lambda:[iscorrect(entry1.get())],bg='SeaGreen1')
+        btn1.config(font=("fixedsys", 12))
+        btn1.grid(row=0, column=1, sticky='w')
+        btn2 = Button(thequiz_window,text="SUBMIT",command=lambda:[iscorrect(entry2.get())],bg='SeaGreen1')
+        btn2.config(font=("fixedsys", 12))
+        btn2.grid(row=1, column=1, sticky='w')
+        btn3 = Button(thequiz_window,text="SUBMIT",command=lambda:[iscorrect(entry3.get())],bg='SeaGreen1')
+        btn3.config(font=("fixedsys", 12))
+        btn3.grid(row=2, column=1, sticky='w')
+        #hintlbl
+        hintlbl1 = Label(thequiz_window,text="HINT: "+hint1,bg='khaki')
+        hintlbl1.config(font=("fixedsys", 12))
+        hintlbl1.grid(row=0, column=2, sticky='w')
+        hintlbl2 = Label(thequiz_window,text="HINT: "+hint2,bg='khaki')
+        hintlbl2.config(font=("fixedsys", 12))
+        hintlbl2.grid(row=1, column=2, sticky='w')
+        hintlbl3 = Label(thequiz_window,text="HINT: "+hint3,bg='khaki')
+        hintlbl3.config(font=("fixedsys", 12))
+    if len(quizdata.index) == 4:
+        #answers
+        answer1 = quizdata['Player Name'].values[0]
+        answer2 = quizdata['Player Name'].values[1]
+        answer3 = quizdata['Player Name'].values[2]
+        answer4 = quizdata['Player Name'].values[3]
+        #hints
+        hint1 = quizdata['Player_Hint'].values[0]
+        hint2 = quizdata['Player_Hint'].values[1]
+        hint3 = quizdata['Player_Hint'].values[2]
+        hint4 = quizdata['Player_Hint'].values[3]
+        #entries
+        entry1 = Entry(thequiz_window, width=30, borderwidth=2, bg='gray70')
+        entry1.config(font=("fixedsys", 12))
+        entry1.grid(row=0, column=0, sticky='w')
+        entry2 = Entry(thequiz_window, width=30, borderwidth=2, bg='gray70')
+        entry2.config(font=("fixedsys", 12))
+        entry2.grid(row=1, column=0, sticky='w')
+        entry3 = Entry(thequiz_window, width=30, borderwidth=2, bg='gray70')
+        entry3.config(font=("fixedsys", 12))
+        entry3.grid(row=2, column=0, sticky='w')
+        entry4 = Entry(thequiz_window, width=30, borderwidth=2, bg='gray70')
+        entry4.config(font=("fixedsys", 12))
+        entry4.grid(row=3, column=0, sticky='w')
+        #btns
+        btn1 = Button(thequiz_window,text="SUBMIT",command=lambda:[iscorrect(entry1.get())],bg='SeaGreen1')
+        btn1.config(font=("fixedsys", 12))
+        btn1.grid(row=0, column=1, sticky='w')
+        btn2 = Button(thequiz_window,text="SUBMIT",command=lambda:[iscorrect(entry2.get())],bg='SeaGreen1')
+        btn2.config(font=("fixedsys", 12))
+        btn2.grid(row=1, column=1, sticky='w')
+        btn3 = Button(thequiz_window,text="SUBMIT",command=lambda:[iscorrect(entry3.get())],bg='SeaGreen1')
+        btn3.config(font=("fixedsys", 12))
+        btn3.grid(row=2, column=1, sticky='w')
+        btn4 = Button(thequiz_window,text="SUBMIT",command=lambda:[iscorrect(entry4.get())],bg='SeaGreen1')
+        btn4.config(font=("fixedsys", 12))
+        btn4.grid(row=3, column=1, sticky='w')
+        #hintlbl
+        hintlbl1 = Label(thequiz_window,text="HINT: "+hint1,bg='khaki')
+        hintlbl1.config(font=("fixedsys", 12))
+        hintlbl1.grid(row=0, column=2, sticky='w')
+        hintlbl2 = Label(thequiz_window,text="HINT: "+hint2,bg='khaki')
+        hintlbl2.config(font=("fixedsys", 12))
+        hintlbl2.grid(row=1, column=2, sticky='w')
+        hintlbl3 = Label(thequiz_window,text="HINT: "+hint3,bg='khaki')
+        hintlbl3.config(font=("fixedsys", 12))
+        hintlbl3.grid(row=2, column=2, sticky='w')
+        hintlbl4 = Label(thequiz_window,text="HINT: "+hint4,bg='khaki')
+        hintlbl4.config(font=("fixedsys", 12))
+        hintlbl4.grid(row=3, column=2, sticky='w')
+    if len(quizdata.index) == 5:
+        #answers
+        answer1 = quizdata['Player Name'].values[0]
+        answer2 = quizdata['Player Name'].values[1]
+        answer3 = quizdata['Player Name'].values[2]
+        answer4 = quizdata['Player Name'].values[3]
+        answer5 = quizdata['Player Name'].values[4]
+        #hints
+        hint1 = quizdata['Player_Hint'].values[0]
+        hint2 = quizdata['Player_Hint'].values[1]
+        hint3 = quizdata['Player_Hint'].values[2]
+        hint4 = quizdata['Player_Hint'].values[3]
+        hint5 = quizdata['Player_Hint'].values[4]
+        #entries
+        entry1 = Entry(thequiz_window, width=30, borderwidth=2, bg='gray70')
+        entry1.config(font=("fixedsys", 12))
+        entry1.grid(row=0, column=0, sticky='w')
+        entry2 = Entry(thequiz_window, width=30, borderwidth=2, bg='gray70')
+        entry2.config(font=("fixedsys", 12))
+        entry2.grid(row=1, column=0, sticky='w')
+        entry3 = Entry(thequiz_window, width=30, borderwidth=2, bg='gray70')
+        entry3.config(font=("fixedsys", 12))
+        entry3.grid(row=2, column=0, sticky='w')
+        entry4 = Entry(thequiz_window, width=30, borderwidth=2, bg='gray70')
+        entry4.config(font=("fixedsys", 12))
+        entry4.grid(row=3, column=0, sticky='w')
+        entry5 = Entry(thequiz_window, width=30, borderwidth=2, bg='gray70')
+        entry5.config(font=("fixedsys", 12))
+        entry5.grid(row=4, column=0, sticky='w')
+        #btns
+        btn1 = Button(thequiz_window,text="SUBMIT",command=lambda:[iscorrect(entry1.get())],bg='SeaGreen1')
+        btn1.config(font=("fixedsys", 12))
+        btn1.grid(row=0, column=1, sticky='w')
+        btn2 = Button(thequiz_window,text="SUBMIT",command=lambda:[iscorrect(entry2.get())],bg='SeaGreen1')
+        btn2.config(font=("fixedsys", 12))
+        btn2.grid(row=1, column=1, sticky='w')
+        btn3 = Button(thequiz_window,text="SUBMIT",command=lambda:[iscorrect(entry3.get())],bg='SeaGreen1')
+        btn3.config(font=("fixedsys", 12))
+        btn3.grid(row=2, column=1, sticky='w')
+        btn4 = Button(thequiz_window,text="SUBMIT",command=lambda:[iscorrect(entry4.get())],bg='SeaGreen1')
+        btn4.config(font=("fixedsys", 12))
+        btn4.grid(row=3, column=1, sticky='w')
+        btn5 = Button(thequiz_window,text="SUBMIT",command=lambda:[iscorrect(entry5.get())],bg='SeaGreen1')
+        btn5.config(font=("fixedsys", 12))
+        btn5.grid(row=4, column=1, sticky='w')
+        #hintlbl
+        hintlbl1 = Label(thequiz_window,text="HINT: "+hint1,bg='khaki')
+        hintlbl1.config(font=("fixedsys", 12))
+        hintlbl1.grid(row=0, column=2, sticky='w')
+        hintlbl2 = Label(thequiz_window,text="HINT: "+hint2,bg='khaki')
+        hintlbl2.config(font=("fixedsys", 12))
+        hintlbl2.grid(row=1, column=2, sticky='w')
+        hintlbl3 = Label(thequiz_window,text="HINT: "+hint3,bg='khaki')
+        hintlbl3.config(font=("fixedsys", 12))
+        hintlbl3.grid(row=2, column=2, sticky='w')
+        hintlbl4 = Label(thequiz_window,text="HINT: "+hint4,bg='khaki')
+        hintlbl4.config(font=("fixedsys", 12))
+        hintlbl4.grid(row=3, column=2, sticky='w')
+        hintlbl5 = Label(thequiz_window,text="HINT: "+hint5,bg='khaki')
+        hintlbl5.config(font=("fixedsys", 12))
+        hintlbl5.grid(row=4, column=2, sticky='w')
+#------------------------------------------------------------------------------
+#function to check correctness of quiz answers
+def iscorrect(answer_given):
+    print(answer1)
+    print(answer2)
+    print(answer3)
+    print(answer4)
+    print(answer5)
 
-
-
-
+    return
 #--IF RETURNING USER, GRABS ROSTERS SPECIFIC TO THE USER FROM THE SERVER--------
 def logged_in():
     if len(actualuser) == 0:
