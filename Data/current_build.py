@@ -742,7 +742,7 @@ def find_quiz():
     global findquiz_window
     findquiz_window = Toplevel()
     findquiz_window.title("AVAILABLE QUIZZES")
-    findquiz_window.geometry("1210x590")
+    findquiz_window.geometry("800x500")
     findquiz_window.configure(bg='gray86')
 
 
@@ -1180,75 +1180,6 @@ def find_quiz():
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-    #the list in the line above is a list of tables with quizzes in them
-    #print(act_tables_with_quizzes)
-    #usr1name = act_tables_with_quizzes[0][:-8]
-    #print(usr1name)
-    #usr2name = act_tables_with_quizzes[1][:-8]
-
-    #user1data = pd.read_sql_query("Select * from dbo."+act_tables_with_quizzes[0], conn)
-    #print(user1data)#this return the first users quiz data
-    #user1desc = user1data['description'].values[0]
-    #user1qname = user1data['roster_name'].values[0]
-    #user2data = pd.read_sql_query("Select * from dbo."+act_tables_with_quizzes[1], conn)
-    #print(user2data)#this return the first users quiz data
-    #user2desc = user2data['description'].values[0]
-    #user2qname = user2data['roster_name'].values[0]
-
-
-    #findquiz_window = Toplevel()
-    #findquiz_window.title("AVAILABLE QUIZZES")
-    #findquiz_window.geometry("1210x590")
-    #findquiz_window.configure(bg='gray86')
-
-    ##build user1s quiz
-    #user1frame = LabelFrame(findquiz_window, text="AUTHOR: "+usr1name, padx=5, pady=5, bg='gray86')
-    #user1frame.grid(sticky='nswe')
-    #user1frame.config(font=("fixedsys", 14))
-    #user1frame.grid(row=0, column=0)
-    ##quiz name
-    #user1_desc_lbl = Label(user1frame, text="QUIZ NAME: "+user1qname, pady=10, bg='gray86')
-    #user1_desc_lbl.config(font=("fixedsys", 12))
-    #user1_desc_lbl.pack()
-    ##descrip
-    #user1_desc_lbl = Label(user1frame, text="QUIZ DESCRIPTION: "+user1desc, pady=10, bg='gray86')
-    #user1_desc_lbl.config(font=("fixedsys", 12))
-    #user1_desc_lbl.pack()
-    ##take quiz btn
-    #usr1_button = Button(user1frame,text="TAKE QUIZ",command=lambda:[quizform(usr1name,user1qname)], bg='SeaGreen1')
-    #usr1_button.config(font=("fixedsys", 12))
-    #usr1_button.pack()
-
-    ##build user2s quiz-------------
-    #user2frame = LabelFrame(findquiz_window, text="AUTHOR: "+usr2name, padx=5, pady=5, bg='gray86')
-    #user2frame.grid(sticky='nswe')
-    #user2frame.config(font=("fixedsys", 14))
-    #user2frame.grid(row=0, column=1)
-    ##quiz name
-    #user2_desc_lbl = Label(user2frame, text="QUIZ NAME: "+user2qname, pady=10, bg='gray86')
-    #user2_desc_lbl.config(font=("fixedsys", 12))
-    #user2_desc_lbl.pack()
-    ##descrip
-    #user2_desc_lbl = Label(user2frame, text="QUIZ DESCRIPTION: "+user2desc, pady=10, bg='gray86')
-    #user2_desc_lbl.config(font=("fixedsys", 12))
-    #user2_desc_lbl.pack()
-    ##take quiz btn
-    #usr2_button = Button(user2frame,text="TAKE QUIZ",command=lambda:[quizform(usr2name,user2qname)], bg='SeaGreen1')
-    #usr2_button.config(font=("fixedsys", 12))
-    #usr2_button.pack()
-
 #---#----------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
@@ -1259,7 +1190,7 @@ def quizform(quiz_author, quiz_name):
     global thequiz_window
     thequiz_window = Toplevel()
     thequiz_window.title(quiz_name.upper())
-    thequiz_window.geometry("1210x590")
+    thequiz_window.geometry("800x250")
     thequiz_window.configure(bg='gray86')
     global answer1
     global answer2
